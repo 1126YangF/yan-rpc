@@ -1,2 +1,2 @@
-jdk=com.yan.rpc.serializer.JdkSerializer
 hessian=com.yan.rpc.serializer.HessianSerializer
+kryo=com.yan.rpc.serializer.KryoSerializer
