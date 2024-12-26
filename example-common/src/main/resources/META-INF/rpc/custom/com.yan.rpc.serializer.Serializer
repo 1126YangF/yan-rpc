@@ -1,2 +1,2 @@
-hessian=com.yan.rpc.serializer.HessianSerializer
-kryo=com.yan.rpc.serializer.KryoSerializer
+hessian=com.yan.example.common.serializer.HessianSerializer
+kryo=com.yan.example.common.serializer.KryoSerializer
