@@ -21,7 +21,6 @@ public class ServiceProxyFactory {
         if (RpcApplication.getRpcConfig().isMock()) {
             return getMockProxy(serviceClass);
         }
-
         return (T) Proxy.newProxyInstance(
                 serviceClass.getClassLoader(),
                 new Class[]{serviceClass},

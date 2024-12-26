@@ -3,6 +3,7 @@ package com.yan.rpc.proxy;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
+import com.yan.rpc.serializer.Serializer;
 import com.yan.rpc.RpcApplication;
 import com.yan.rpc.config.RpcConfig;
 import com.yan.rpc.constant.RpcConstant;
@@ -11,16 +12,13 @@ import com.yan.rpc.model.RpcResponse;
 import com.yan.rpc.model.ServiceMetaInfo;
 import com.yan.rpc.registry.Registry;
 import com.yan.rpc.registry.RegistryFactory;
-import com.yan.rpc.serializer.JdkSerializer;
-import com.yan.rpc.serializer.Serializer;
 import com.yan.rpc.serializer.SerializerFactory;
-import com.yan.rpc.utils.ConfigUtils;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
-import java.util.ServiceLoader;
 
 /**
  * 服务代理（JDK 动态代理）
@@ -38,7 +36,9 @@ public class ServiceProxy implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         //系统内置的动态加载指定接口的实现类
 //        ServiceLoader<Serializer> load = ServiceLoader.load(Serializer.class);
-
+//        System.out.println("proxy============ " + proxy);
+        System.out.println("method============ " + method);
+        System.out.println("args============ " + Arrays.toString(args));
         // 读取配置文件
         RpcConfig rpcConfig = RpcApplication.getRpcConfig();
         // 指定序列化器
@@ -47,7 +47,7 @@ public class ServiceProxy implements InvocationHandler {
 
         // 构造请求
         String serviceName = method.getDeclaringClass().getName();
-        System.out.println("============serviceName: " + serviceName);
+        System.out.println("serviceName============ " + serviceName);
         RpcRequest rpcRequest = RpcRequest.builder()
                 .serviceName(serviceName)
                 .methodName(method.getName())
@@ -66,6 +66,7 @@ public class ServiceProxy implements InvocationHandler {
             if (CollUtil.isEmpty(serviceMetaInfoList)) {
                 throw new RuntimeException("暂无服务地址");
             }
+            //获取服务注册信息
             ServiceMetaInfo selectedServiceMetaInfo = serviceMetaInfoList.get(0);
             // 发送请求
             try (HttpResponse httpResponse = HttpRequest.post(selectedServiceMetaInfo.getServiceAddress())

@@ -1,8 +1,8 @@
 package com.yan.rpc.spi;
 
 import cn.hutool.core.io.resource.ResourceUtil;
-import com.yan.rpc.registry.Registry;
 import com.yan.rpc.serializer.Serializer;
+import com.yan.rpc.registry.Registry;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
@@ -107,7 +107,7 @@ public class SpiLoader {
         Map<String, Class<?>> keyClassMap = new HashMap<>();
         for (String scanDir : SCAN_DIRS) {
             List<URL> resources = ResourceUtil.getResources(scanDir + loadClass.getName());
-            System.out.println("url:" + resources);
+            System.out.println("资源路径=============" + resources);
             // 读取每个资源文件
             for (URL resource : resources) {
                 try {
