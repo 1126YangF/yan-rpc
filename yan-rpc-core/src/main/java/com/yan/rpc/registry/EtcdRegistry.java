@@ -43,7 +43,7 @@ public class EtcdRegistry implements Registry {
      */
     @Deprecated
     private final RegistryServiceCache registryServiceCache = new RegistryServiceCache();
-    private final RegistryServiceMultiCache registryServiceMultiCache = new RegistryServiceMultiCache();
+    private final  RegistryServiceMultiCache registryServiceMultiCache = new RegistryServiceMultiCache();
 
     /**
      * 正在监听的 key 集合

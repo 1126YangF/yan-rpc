@@ -1,0 +1,2 @@
+jdk=com.yan.rpc.serializer.JdkSerializer
+json=com.yan.rpc.serializer.JsonSerializer

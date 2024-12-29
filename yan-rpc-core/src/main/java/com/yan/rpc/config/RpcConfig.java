@@ -1,5 +1,7 @@
 package com.yan.rpc.config;
 
+import com.yan.rpc.fault.retry.RetryStrategyKeys;
+import com.yan.rpc.loadbalancer.LoadBalancerKeys;
 import com.yan.rpc.serializer.SerializerKeys;
 import lombok.Data;
 
@@ -45,17 +47,16 @@ public class RpcConfig {
      */
     private RegistryConfig registryConfig = new RegistryConfig();
 
-//
-//    /**
-//     * 负载均衡器
-//     */
-//    private String loadBalancer = LoadBalancerKeys.ROUND_ROBIN;
-//
-//    /**
-//     * 重试策略
-//     */
-//    private String retryStrategy = RetryStrategyKeys.NO;
-//
+    /**
+     * 负载均衡器
+     */
+    private String loadBalancer = LoadBalancerKeys.ROUND_ROBIN;
+
+    /**
+     * 重试策略
+     */
+    private String retryStrategy = RetryStrategyKeys.NO;
+
 //    /**
 //     * 容错策略
 //     */

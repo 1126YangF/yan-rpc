@@ -1,7 +1,9 @@
-package com.yan.rpc.registry;
+package register;
 
 import com.yan.rpc.config.RegistryConfig;
 import com.yan.rpc.model.ServiceMetaInfo;
+import com.yan.rpc.registry.EtcdRegistry;
+import com.yan.rpc.registry.Registry;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
