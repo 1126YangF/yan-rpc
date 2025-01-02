@@ -55,7 +55,11 @@ public class TcpServerHandler implements Handler<NetSocket> {
 
             // 发送响应，编码
             header.setType((byte) ProtocolMessageTypeEnum.RESPONSE.getKey());
-            header.setStatus((byte) ProtocolMessageStatusEnum.OK.getValue());
+            if (rpcResponse.getException() != null) {
+                header.setStatus((byte) ProtocolMessageStatusEnum.BAD_RESPONSE.getValue());
+            }else {
+                header.setStatus((byte) ProtocolMessageStatusEnum.OK.getValue());
+            }
             ProtocolMessage<RpcResponse> responseProtocolMessage = new ProtocolMessage<>(header, rpcResponse);
             try {
                 Buffer encode = ProtocolMessageEncoder.encode(responseProtocolMessage);

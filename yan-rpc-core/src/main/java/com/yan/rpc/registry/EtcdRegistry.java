@@ -131,9 +131,7 @@ public class EtcdRegistry implements Registry {
     }
 
     public void destroy() {
-        System.out.println("当前节点下线");
-        // 下线节点
-        // 遍历本节点所有的 key
+        // 下线节点 遍历本节点所有的 key
         for (String key : localRegisterNodeKeySet) {
             try {
                 kvClient.delete(ByteSequence.from(key, StandardCharsets.UTF_8)).get();
@@ -152,8 +150,8 @@ public class EtcdRegistry implements Registry {
 
     @Override
     public void heartBeat() {
-        //定时任务 10 秒续签一次
-        CronUtil.schedule("*/10 * * * * *", new Task() {
+        //定时任务 15 秒续签一次
+        CronUtil.schedule("*/15 * * * * *", new Task() {
             @Override
             public void execute() {
                 // 遍历本节点所有的 key
@@ -200,9 +198,9 @@ public class EtcdRegistry implements Registry {
                         // key 删除时触发
                         case DELETE:
                             // 清理注册服务缓存
-                            System.out.println(serviceNodeKey);
+                            System.out.println("clean: " + serviceNodeKey);
                             String[] servicekey = serviceNodeKey.split("/");
-                            System.out.println("----------serviceKey" + Arrays.toString(servicekey));
+                            //这里直接清除同一版本下的所有节点
                             registryServiceMultiCache.clearCache(servicekey[0]);
                             break;
                         // 其他操作直接break

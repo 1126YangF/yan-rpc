@@ -6,6 +6,8 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import com.yan.rpc.fault.retry.RetryStrategy;
 import com.yan.rpc.fault.retry.RetryStrategyFactory;
+import com.yan.rpc.fault.tolerant.TolerantStrategy;
+import com.yan.rpc.fault.tolerant.TolerantStrategyFactory;
 import com.yan.rpc.loadbalancer.LoadBalancer;
 import com.yan.rpc.loadbalancer.LoadBalancerFactory;
 import com.yan.rpc.protocol.*;
@@ -59,7 +61,7 @@ public class ServiceProxy implements InvocationHandler {
 
         // 构造请求
         String serviceName = method.getDeclaringClass().getName();
-        System.out.println("serviceName============ " + serviceName);
+        System.out.println("请求serviceName============ " + serviceName);
         RpcRequest rpcRequest = RpcRequest.builder()
                 .serviceName(serviceName)
                 .methodName(method.getName())
@@ -83,11 +85,25 @@ public class ServiceProxy implements InvocationHandler {
             requestParams.put("methodName", rpcRequest.getMethodName());
             ServiceMetaInfo selectedServiceMetaInfo = loadBalancer.select(requestParams, serviceMetaInfoList);
 
+            //用于测试连接失败
+            selectedServiceMetaInfo.setServiceHost(selectedServiceMetaInfo.getServiceHost() + "123");
+
             // 发送 TCP 请求  使用重试机制
-            RetryStrategy retryStrategy = RetryStrategyFactory.getInstance(rpcConfig.getRetryStrategy());
-            RpcResponse rpcResponse = retryStrategy.doRetry(() ->
-                    VertxTcpClient.doRequest(rpcRequest, selectedServiceMetaInfo)
-            );
+            RpcResponse rpcResponse;
+            try {
+                RetryStrategy retryStrategy = RetryStrategyFactory.getInstance(rpcConfig.getRetryStrategy());
+                rpcResponse = retryStrategy.doRetry(() ->
+                        VertxTcpClient.doRequest(rpcRequest, selectedServiceMetaInfo)
+                );
+            } catch (Exception e) {
+                // 容错机制
+                TolerantStrategy tolerantStrategy = TolerantStrategyFactory.getInstance(rpcConfig.getTolerantStrategy());
+                Map<String, Object> requestTolerantParamMap = new HashMap<>();
+                requestTolerantParamMap.put("rpcRequest",rpcRequest);
+                requestTolerantParamMap.put("selectedServiceMetaInfo",selectedServiceMetaInfo);
+                requestTolerantParamMap.put("serviceMetaInfoList",serviceMetaInfoList);
+                rpcResponse = tolerantStrategy.doTolerant(requestTolerantParamMap, e);
+            }
             return rpcResponse.getData();
 
             // 发送http请求
@@ -101,6 +117,7 @@ public class ServiceProxy implements InvocationHandler {
 //                RpcResponse rpcResponse = serializer.deserialize(result, RpcResponse.class);
 //                return rpcResponse.getData();
 //            }
+
         } catch (Exception e) {
             throw new RuntimeException("调用失败");
         }

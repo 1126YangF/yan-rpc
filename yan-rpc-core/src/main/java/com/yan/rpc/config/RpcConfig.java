@@ -1,6 +1,7 @@
 package com.yan.rpc.config;
 
 import com.yan.rpc.fault.retry.RetryStrategyKeys;
+import com.yan.rpc.fault.tolerant.TolerantStrategyKeys;
 import com.yan.rpc.loadbalancer.LoadBalancerKeys;
 import com.yan.rpc.serializer.SerializerKeys;
 import lombok.Data;
@@ -57,10 +58,8 @@ public class RpcConfig {
      */
     private String retryStrategy = RetryStrategyKeys.NO;
 
-//    /**
-//     * 容错策略
-//     */
-//    private String tolerantStrategy = TolerantStrategyKeys.FAIL_FAST;
-//
-
+    /**
+     * 容错策略
+     */
+    private String tolerantStrategy = TolerantStrategyKeys.FAIL_FAST;
 }

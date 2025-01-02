@@ -33,13 +33,14 @@ public class TcpBufferHandlerWrapper implements Handler<Buffer> {
      * @return
      */
     private RecordParser initRecordParser(Handler<Buffer> bufferHandler) {
-        // 构造 parser
+        // 构造 parser 用于解析固定长度的消息头
         RecordParser parser = RecordParser.newFixed(ProtocolConstant.MESSAGE_HEADER_LENGTH);
         parser.setOutput(new Handler<Buffer>() {
             // 初始化
             int size = -1;
             // 一次完整的读取（头 + 体）
             Buffer resultBuffer = Buffer.buffer();
+            //实现handle方法，该方法会在每次接收到新的数据时被调用。
             @Override
             public void handle(Buffer buffer) {
                 // 1. 每次循环，首先读取消息头
